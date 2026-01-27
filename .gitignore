@@ -48,6 +48,8 @@ Makefile
 */.vscode/launch.json
 */.vscode/tasks.json
 
+*/.idea/*
+
 # OS generated files
 Thumbs.db
 .DS_Store

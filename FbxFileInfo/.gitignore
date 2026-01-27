@@ -43,13 +43,10 @@ Makefile
 
 # IDE files
 .vs/
-*/.vscode/cmake-kits.json
-*/.vscode/settings.json
-*/.vscode/launch.json
-*/.vscode/tasks.json
+.vscode/settings.json
+.vscode/launch.json
+.vscode/tasks.json
 
 # OS generated files
 Thumbs.db
 .DS_Store
-
-*.code-workspace

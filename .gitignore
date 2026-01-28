@@ -55,6 +55,7 @@ CMakeUserPresets.json
 */.vscode/tasks.json
 
 */.idea/*
+.idea/
 
 # OS generated files
 Thumbs.db

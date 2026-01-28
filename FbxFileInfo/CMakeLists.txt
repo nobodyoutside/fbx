@@ -4,8 +4,18 @@ project(FbxSdkTest)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# FBX SDK 경로 설정
-set(FBX_SDK_ROOT "C:/Program Files/Autodesk/FBX/FBX SDK/2020.3.7")
+# FBX SDK 경로 설정 (외부에서 -DFBX_SDK_ROOT=... 로 override 가능)
+if(NOT DEFINED FBX_SDK_ROOT)
+    if(WIN32)
+        set(FBX_SDK_ROOT "C:/Program Files/Autodesk/FBX/FBX SDK/2020.3.7"
+            CACHE PATH "FBX SDK root path")
+    elseif(APPLE)
+        set(FBX_SDK_ROOT "/Applications/Autodesk/FBX SDK/2020.3.7"
+            CACHE PATH "FBX SDK root path")
+    else()
+        set(FBX_SDK_ROOT "" CACHE PATH "FBX SDK root path")
+    endif()
+endif()
 
 # FBX SDK 헤더 및 라이브러리 경로 설정
 include_directories("${FBX_SDK_ROOT}/include")

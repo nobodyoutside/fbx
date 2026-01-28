@@ -20,6 +20,9 @@ else()
   set(FBX_SDK_ROOT "" CACHE PATH "FBX SDK root for FbxFileInfo")
 endif()
 
+# FbxViewer SDK roots (override via -DFBXVIEWER_SDK_ROOT=... and -DFBXVIEWER_QT5_DIR=...)
+# - FBXVIEWER_SDK_ROOT: root containing include/ and lib/
+# - FBXVIEWER_QT5_DIR: Qt5 cmake config dir (ends with /lib/cmake/Qt5)
 set(FBXVIEWER_SDK_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/FbxViewer/SDK/fbxsdk"
     CACHE PATH "FBX SDK root for FbxViewer")
 set(FBXVIEWER_QT5_DIR "${CMAKE_CURRENT_SOURCE_DIR}/FbxViewer/SDK/qtsdk/lib/cmake/Qt5"

@@ -1,0 +1,51 @@
+{
+  "version": 3,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 16,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "base",
+      "hidden": true,
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/${presetName}",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "BUILD_FBX_FILE_INFO": "ON",
+        "BUILD_FBX_VIEWER": "ON"
+      }
+    },
+    {
+      "name": "win",
+      "displayName": "Windows Release",
+      "inherits": "base",
+      "cacheVariables": {
+        "FBX_SDK_ROOT": "C:/Program Files/Autodesk/FBX/FBX SDK/2020.3.7",
+        "FBXVIEWER_SDK_ROOT": "${sourceDir}/FbxViewer/SDK/fbxsdk",
+        "FBXVIEWER_QT5_DIR": "${sourceDir}/FbxViewer/SDK/qtsdk/lib/cmake/Qt5"
+      }
+    },
+    {
+      "name": "mac",
+      "displayName": "macOS Release",
+      "inherits": "base",
+      "cacheVariables": {
+        "FBX_SDK_ROOT": "/Applications/Autodesk/FBX SDK/2020.3.7",
+        "FBXVIEWER_SDK_ROOT": "${sourceDir}/FbxViewer/SDK/fbxsdk",
+        "FBXVIEWER_QT5_DIR": "${sourceDir}/FbxViewer/SDK/qtsdk/lib/cmake/Qt5"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "win",
+      "configurePreset": "win"
+    },
+    {
+      "name": "mac",
+      "configurePreset": "mac"
+    }
+  ]
+}

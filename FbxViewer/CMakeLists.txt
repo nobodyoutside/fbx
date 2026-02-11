@@ -13,7 +13,14 @@ if(NOT DEFINED FBXVIEWER_SDK_ROOT)
 endif()
 set(FBX_SDK_ROOT "${FBXVIEWER_SDK_ROOT}")
 set(FBX_SDK_INCLUDE_DIR "${FBX_SDK_ROOT}/include")
-set(FBX_SDK_LIB_DIR "${FBX_SDK_ROOT}/lib/vs2017/x64/debug")
+# Detect lib directory: system SDK uses lib/x64/<config>, local SDK uses lib/vs2017/x64/<config>
+if(EXISTS "${FBX_SDK_ROOT}/lib/x64")
+    set(FBX_SDK_LIB_BASE "${FBX_SDK_ROOT}/lib/x64")
+elseif(EXISTS "${FBX_SDK_ROOT}/lib/vs2017/x64")
+    set(FBX_SDK_LIB_BASE "${FBX_SDK_ROOT}/lib/vs2017/x64")
+else()
+    message(FATAL_ERROR "Cannot find FBX SDK lib directory under ${FBX_SDK_ROOT}/lib")
+endif()
 
 # Qt5 setup (외부에서 -DFBXVIEWER_QT5_DIR=... 로 override 가능)
 if(NOT DEFINED FBXVIEWER_QT5_DIR)
@@ -50,7 +57,8 @@ target_include_directories(FbxViewer PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/SDK/qtsdk/include/QtWidgets
 )
 
-target_link_directories(FbxViewer PRIVATE ${FBX_SDK_LIB_DIR})
+target_link_directories(FbxViewer PRIVATE
+    "$<IF:$<CONFIG:Debug>,${FBX_SDK_LIB_BASE}/debug,${FBX_SDK_LIB_BASE}/release>")
 
 # Link against FBX SDK and Qt5
 target_compile_definitions(FbxViewer PRIVATE FBXSDK_SHARED)
@@ -65,7 +73,7 @@ target_link_libraries(FbxViewer PRIVATE
 # Copy DLLs to output directory
 add_custom_command(TARGET FbxViewer POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
-    "${FBX_SDK_LIB_DIR}/libfbxsdk.dll"
+    "$<IF:$<CONFIG:Debug>,${FBX_SDK_LIB_BASE}/debug,${FBX_SDK_LIB_BASE}/release>/libfbxsdk.dll"
     $<TARGET_FILE_DIR:FbxViewer>)
 
 enable_testing()

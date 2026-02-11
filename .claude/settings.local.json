@@ -9,7 +9,13 @@
       "Bash(cmd /c \"dir /b D:\\\\TestWork\\\\FbxSdkTest\\\\build\\\\local\\\\FbxViewer\"\")",
       "Bash(cmd /c \"dir /b D:\\\\TestWork\\\\FbxSdkTest\\\\build\\\\local\\\\FbxViewer\")",
       "Bash(cmake --preset:*)",
-      "Bash(cmake --build:*)"
+      "Bash(cmake --build:*)",
+      "Bash(where:*)",
+      "Bash(cmd /c \"dir /s /b \"\"C:\\\\Program Files\\\\Microsoft Visual Studio\\\\2022\\\\*\\\\VC\\\\Auxiliary\\\\Build\\\\vcvarsall.bat\"\" 2>nul\")",
+      "Bash(cmd /c \"dir /s /b \"\"C:\\\\Program Files\\\\Microsoft Visual Studio\\\\2022\\\\Community\\\\VC\\\\Auxiliary\\\\Build\\\\vcvarsall.bat\"\" \"\"C:\\\\Program Files\\\\Microsoft Visual Studio\\\\2022\\\\Professional\\\\VC\\\\Auxiliary\\\\Build\\\\vcvarsall.bat\"\" \"\"C:\\\\Program Files\\\\Microsoft Visual Studio\\\\2022\\\\Enterprise\\\\VC\\\\Auxiliary\\\\Build\\\\vcvarsall.bat\"\" 2>nul\")",
+      "Bash(cmd /c:*)",
+      "Bash(powershell -Command:*)",
+      "Bash(powershell -NoProfile -File -:*)"
     ]
   }
 }

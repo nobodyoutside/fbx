@@ -17,7 +17,7 @@ target_compile_definitions(fbxviewer_tests PRIVATE
 # libfbxsdk.dll 복사
 add_custom_command(TARGET fbxviewer_tests POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
-    "${FBX_SDK_LIB_DIR}/libfbxsdk.dll"
+    "$<IF:$<CONFIG:Debug>,${FBX_SDK_LIB_BASE}/debug,${FBX_SDK_LIB_BASE}/release>/libfbxsdk.dll"
     $<TARGET_FILE_DIR:fbxviewer_tests>
 )
 

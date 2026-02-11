@@ -31,10 +31,19 @@ endif()
 # 실행 파일 생성
 add_executable(FbxSdkTest main.cpp)
 
+# Detect lib directory: system SDK uses lib/x64/<config>, local SDK uses lib/vs2017/x64/<config>
+if(EXISTS "${FBX_SDK_ROOT}/lib/${FBX_LIB_ARCH}")
+    set(FBX_LIB_BASE "${FBX_SDK_ROOT}/lib/${FBX_LIB_ARCH}")
+elseif(EXISTS "${FBX_SDK_ROOT}/lib/vs2017/${FBX_LIB_ARCH}")
+    set(FBX_LIB_BASE "${FBX_SDK_ROOT}/lib/vs2017/${FBX_LIB_ARCH}")
+else()
+    message(FATAL_ERROR "Cannot find FBX SDK lib directory under ${FBX_SDK_ROOT}/lib")
+endif()
+
 # Modern CMake: target-scoped include/link directories
 target_include_directories(FbxSdkTest PRIVATE "${FBX_SDK_ROOT}/include")
 target_link_directories(FbxSdkTest PRIVATE
-    "${FBX_SDK_ROOT}/lib/${FBX_LIB_ARCH}/$<IF:$<CONFIG:Debug>,debug,release>")
+    "${FBX_LIB_BASE}/$<IF:$<CONFIG:Debug>,debug,release>")
 
 # 라이브러리 링크
 target_link_libraries(FbxSdkTest PRIVATE

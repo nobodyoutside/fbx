@@ -15,7 +15,10 @@
       "Bash(cmd /c \"dir /s /b \"\"C:\\\\Program Files\\\\Microsoft Visual Studio\\\\2022\\\\Community\\\\VC\\\\Auxiliary\\\\Build\\\\vcvarsall.bat\"\" \"\"C:\\\\Program Files\\\\Microsoft Visual Studio\\\\2022\\\\Professional\\\\VC\\\\Auxiliary\\\\Build\\\\vcvarsall.bat\"\" \"\"C:\\\\Program Files\\\\Microsoft Visual Studio\\\\2022\\\\Enterprise\\\\VC\\\\Auxiliary\\\\Build\\\\vcvarsall.bat\"\" 2>nul\")",
       "Bash(cmd /c:*)",
       "Bash(powershell -Command:*)",
-      "Bash(powershell -NoProfile -File -:*)"
+      "Bash(powershell -NoProfile -File -:*)",
+      "Bash(build.bat)",
+      "Bash(cmd.exe /c \"echo hello && cmake --version\")",
+      "Bash(cmake:*)"
     ]
   }
 }

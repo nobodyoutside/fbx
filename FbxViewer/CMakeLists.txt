@@ -39,12 +39,27 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/SDK/Qt5sdk/include/QtWidgets
 )
 
-add_executable(FbxViewer 
-    main.cpp
+add_library(FbxLoaderLib STATIC
     FbxLoader.cpp
     FbxLoader.h
 )
 target_include_directories(FbxLoaderLib PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${FBX_SDK_INCLUDE_DIR}
+)
+target_compile_definitions(FbxLoaderLib PUBLIC FBXSDK_SHARED)
+target_link_directories(FbxLoaderLib PUBLIC
+    "$<IF:$<CONFIG:Debug>,${FBX_SDK_LIB_BASE}/debug,${FBX_SDK_LIB_BASE}/release>")
+target_link_libraries(FbxLoaderLib PUBLIC libfbxsdk Qt5::Core Qt5::Gui)
+
+add_executable(FbxViewer
+    main.cpp
+    MainWindow.cpp
+    MainWindow.h
+    ViewerWidget.cpp
+    ViewerWidget.h
+)
+target_include_directories(FbxViewer PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${FBX_SDK_INCLUDE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/SDK/Qt5sdk/include
@@ -53,15 +68,12 @@ target_include_directories(FbxLoaderLib PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/SDK/Qt5sdk/include/QtWidgets
 )
 
-target_link_directories(FbxViewer PRIVATE ${FBX_SDK_LIB_DIR})
-
-# Link against FBX SDK and Qt5
-target_compile_definitions(FbxViewer PRIVATE FBXSDK_SHARED)
-target_link_libraries(FbxViewer PRIVATE 
-    libfbxsdk 
-    Qt5::Core 
-    Qt5::Gui 
-    Qt5::Widgets 
+# Link against FbxLoaderLib, Qt5, and OpenGL
+target_link_libraries(FbxViewer PRIVATE
+    FbxLoaderLib
+    Qt5::Core
+    Qt5::Gui
+    Qt5::Widgets
     opengl32
 )
 

@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dir:*)",
+      "Bash(cmd /c \"call \"\"C:\\\\Program Files\\\\Microsoft Visual Studio\\\\2022\\\\Community\\\\VC\\\\Auxiliary\\\\Build\\\\vcvarsall.bat\"\" x64 >nul 2>&1 && cmake --preset local\")",
+      "Bash(\"D:/TestWork/FbxSdkTest/run_tests.bat\")",
+      "Bash(\"D:/TestWork/FbxSdkTest/build_local.bat\")",
+      "Bash(cmd /c \"dir /b D:\\\\TestWork\\\\FbxSdkTest\\\\build\\\\local\\\\FbxViewer\\\\*.dll\")",
+      "Bash(cmd /c \"dir /b D:\\\\TestWork\\\\FbxSdkTest\\\\build\\\\local\\\\FbxViewer\"\")",
+      "Bash(cmd /c \"dir /b D:\\\\TestWork\\\\FbxSdkTest\\\\build\\\\local\\\\FbxViewer\")",
+      "Bash(cmake --preset:*)",
+      "Bash(cmake --build:*)"
+    ]
+  }
+}

@@ -3,6 +3,7 @@
 #include <QHBoxLayout>
 #include <QFileDialog>
 #include <QLabel>
+#include <QMessageBox>
 
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
     QWidget* centralWidget = new QWidget(this);
@@ -60,6 +61,9 @@ void MainWindow::openFile() {
             if (end > start) {
                 mAnimSlider->setRange(0, 1000); // 1000 steps
             }
+        } else {
+            QMessageBox::warning(this, "Load Failed",
+                QString("Failed to load FBX file:\n%1").arg(fileName));
         }
     }
 }

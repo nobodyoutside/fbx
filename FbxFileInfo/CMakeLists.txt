@@ -17,31 +17,27 @@ if(NOT DEFINED FBX_SDK_ROOT)
     endif()
 endif()
 
-# FBX SDK 헤더 및 라이브러리 경로 설정
-include_directories("${FBX_SDK_ROOT}/include")
-
 # 플랫폼별 라이브러리 경로 설정
 if(WIN32)
     if(CMAKE_SIZEOF_VOID_P EQUAL 8)
-        # 64비트
-        link_directories("${FBX_SDK_ROOT}/lib/x64/release")
-        link_directories("${FBX_SDK_ROOT}/lib/x64/debug")
-        set(FBX_LIBRARIES_RELEASE libfbxsdk-md.lib)
-        set(FBX_LIBRARIES_DEBUG libfbxsdk-md.lib)
+        set(FBX_LIB_ARCH "x64")
     else()
-        # 32비트
-        link_directories("${FBX_SDK_ROOT}/lib/x86/release")
-        link_directories("${FBX_SDK_ROOT}/lib/x86/debug")
-        set(FBX_LIBRARIES_RELEASE libfbxsdk-md.lib)
-        set(FBX_LIBRARIES_DEBUG libfbxsdk-md.lib)
+        set(FBX_LIB_ARCH "x86")
     endif()
+    set(FBX_LIBRARIES_RELEASE libfbxsdk-md.lib)
+    set(FBX_LIBRARIES_DEBUG libfbxsdk-md.lib)
 endif()
 
 # 실행 파일 생성
 add_executable(FbxSdkTest main.cpp)
 
+# Modern CMake: target-scoped include/link directories
+target_include_directories(FbxSdkTest PRIVATE "${FBX_SDK_ROOT}/include")
+target_link_directories(FbxSdkTest PRIVATE
+    "${FBX_SDK_ROOT}/lib/${FBX_LIB_ARCH}/$<IF:$<CONFIG:Debug>,debug,release>")
+
 # 라이브러리 링크
-target_link_libraries(FbxSdkTest 
+target_link_libraries(FbxSdkTest PRIVATE
     optimized ${FBX_LIBRARIES_RELEASE}
     debug ${FBX_LIBRARIES_DEBUG}
     optimized libxml2-md.lib
@@ -52,8 +48,8 @@ target_link_libraries(FbxSdkTest
 
 # Windows에서 필요한 추가 라이브러리
 if(WIN32)
-    target_link_libraries(FbxSdkTest 
-        kernel32.lib 
+    target_link_libraries(FbxSdkTest PRIVATE
+        kernel32.lib
         user32.lib 
         gdi32.lib 
         winspool.lib 

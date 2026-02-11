@@ -12,6 +12,10 @@ FbxLoader::~FbxLoader() {
 }
 
 bool FbxLoader::loadFile(const std::string& filename) {
+    mMeshes.clear();
+    mAnimStart = 0;
+    mAnimEnd = 0;
+
     mScene = FbxScene::Create(mSdkManager, "myScene");
     FbxImporter* importer = FbxImporter::Create(mSdkManager, "");
 
@@ -19,7 +23,10 @@ bool FbxLoader::loadFile(const std::string& filename) {
         return false;
     }
 
-    importer->Import(mScene);
+    if (!importer->Import(mScene)) {
+        importer->Destroy();
+        return false;
+    }
     importer->Destroy();
 
     FbxGeometryConverter converter(mSdkManager);
@@ -28,10 +35,8 @@ bool FbxLoader::loadFile(const std::string& filename) {
     processNode(mScene->GetRootNode());
 
     // Basic animation range
-    FbxTimeSpan timeSpan;
     if (mScene->GetSrcObjectCount<FbxAnimStack>() > 0) {
         FbxAnimStack* animStack = mScene->GetSrcObject<FbxAnimStack>(0);
-        FbxTimeSpan timeSpan;
         FbxTakeInfo* takeInfo = mScene->GetTakeInfo(animStack->GetName());
         if (takeInfo) {
             mAnimStart = (float)takeInfo->mLocalTimeSpan.GetStart().GetSecondDouble();
@@ -60,13 +65,18 @@ void FbxLoader::processMesh(FbxMesh* mesh) {
     int vertexCount = mesh->GetControlPointsCount();
     FbxVector4* controlPoints = mesh->GetControlPoints();
 
+    // UV set name queried once before the loop
+    FbxStringList uvSetNames;
+    mesh->GetUVSetNames(uvSetNames);
+    const char* uvSetName = (uvSetNames.GetCount() > 0) ? uvSetNames.GetStringAt(0) : nullptr;
+
     // Vertices and Indices
     int polygonCount = mesh->GetPolygonCount();
     for (int i = 0; i < polygonCount; ++i) {
         for (int j = 0; j < 3; ++j) {
             int ctrlPointIndex = mesh->GetPolygonVertex(i, j);
             Vertex vertex;
-            
+
             // Position
             vertex.position = QVector3D(
                 (float)controlPoints[ctrlPointIndex][0],
@@ -93,12 +103,10 @@ void FbxLoader::processMesh(FbxMesh* mesh) {
             }
 
             // UV
-            FbxStringList uvSetNames;
-            mesh->GetUVSetNames(uvSetNames);
-            if (uvSetNames.GetCount() > 0) {
+            if (uvSetName) {
                 FbxVector2 uv;
                 bool unmapped;
-                if (mesh->GetPolygonVertexUV(i, j, uvSetNames.GetStringAt(0), uv, unmapped)) {
+                if (mesh->GetPolygonVertexUV(i, j, uvSetName, uv, unmapped)) {
                     vertex.uv = QVector2D((float)uv[0], (float)uv[1]);
                 }
             }

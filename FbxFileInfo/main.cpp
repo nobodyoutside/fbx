@@ -77,7 +77,7 @@ void PrintNodeInfo(FbxNode* pNode, int depth = 0)
         // 메시인 경우 추가 정보 출력
         if (pAttribute->GetAttributeType() == FbxNodeAttribute::eMesh)
         {
-            FbxMesh* pMesh = (FbxMesh*)pAttribute;
+            FbxMesh* pMesh = static_cast<FbxMesh*>(pAttribute);
             std::cout << indent << "  Vertices: " << pMesh->GetControlPointsCount() << std::endl;
             std::cout << indent << "  Polygons: " << pMesh->GetPolygonCount() << std::endl;
         }

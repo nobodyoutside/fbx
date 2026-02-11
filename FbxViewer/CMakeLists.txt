@@ -24,43 +24,44 @@ endif()
 
 # Qt5 setup (외부에서 -DFBXVIEWER_QT5_DIR=... 로 override 가능)
 if(NOT DEFINED FBXVIEWER_QT5_DIR)
-    set(FBXVIEWER_QT5_DIR "${CMAKE_CURRENT_SOURCE_DIR}/SDK/qtsdk/lib/cmake/Qt5"
+    set(FBXVIEWER_QT5_DIR "${CMAKE_CURRENT_SOURCE_DIR}/SDK/Qt5sdk/lib/cmake/Qt5"
         CACHE PATH "Qt5 Dir for FbxViewer")
 endif()
 set(Qt5_DIR "${FBXVIEWER_QT5_DIR}")
 set(CMAKE_PREFIX_PATH "${FBXVIEWER_QT5_DIR}/..")
 find_package(Qt5 REQUIRED COMPONENTS Core Gui Widgets)
 
-# FbxLoader를 정적 라이브러리로 분리 (테스트에서 재사용)
-add_library(FbxLoaderLib STATIC
+include_directories(
+    ${FBX_SDK_INCLUDE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/SDK/Qt5sdk/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/SDK/Qt5sdk/include/QtCore
+    ${CMAKE_CURRENT_SOURCE_DIR}/SDK/Qt5sdk/include/QtGui
+    ${CMAKE_CURRENT_SOURCE_DIR}/SDK/Qt5sdk/include/QtWidgets
+)
+
+add_executable(FbxViewer 
+    main.cpp
     FbxLoader.cpp
     FbxLoader.h
 )
 target_include_directories(FbxLoaderLib PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${FBX_SDK_INCLUDE_DIR}
-)
-target_link_directories(FbxLoaderLib PUBLIC
-    "$<IF:$<CONFIG:Debug>,${FBX_SDK_LIB_BASE}/debug,${FBX_SDK_LIB_BASE}/release>")
-target_compile_definitions(FbxLoaderLib PUBLIC FBXSDK_SHARED)
-target_link_libraries(FbxLoaderLib PUBLIC
-    libfbxsdk
-    Qt5::Core
-    Qt5::Gui
+    ${CMAKE_CURRENT_SOURCE_DIR}/SDK/Qt5sdk/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/SDK/Qt5sdk/include/QtCore
+    ${CMAKE_CURRENT_SOURCE_DIR}/SDK/Qt5sdk/include/QtGui
+    ${CMAKE_CURRENT_SOURCE_DIR}/SDK/Qt5sdk/include/QtWidgets
 )
 
-# FbxViewer 실행 파일
-add_executable(FbxViewer
-    main.cpp
-    ViewerWidget.cpp ViewerWidget.h
-    MainWindow.cpp MainWindow.h
-)
+target_link_directories(FbxViewer PRIVATE ${FBX_SDK_LIB_DIR})
 
-target_include_directories(FbxViewer PRIVATE ${FBX_SDK_INCLUDE_DIR})
-
-target_link_libraries(FbxViewer PRIVATE
-    FbxLoaderLib
-    Qt5::Core Qt5::Gui Qt5::Widgets
+# Link against FBX SDK and Qt5
+target_compile_definitions(FbxViewer PRIVATE FBXSDK_SHARED)
+target_link_libraries(FbxViewer PRIVATE 
+    libfbxsdk 
+    Qt5::Core 
+    Qt5::Gui 
+    Qt5::Widgets 
     opengl32
 )
 

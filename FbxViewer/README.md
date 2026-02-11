@@ -4,7 +4,7 @@ fbx 파일을 뷰어로 보여주는 프로젝트입니다.
 GUI는 QT 코드를 사용
 
 사용언어는 cpp
-QT5_DIR = ./SDK/qtsdk/lib/cmake/Qt5
+QT5_DIR = ./SDK/Qt5sdk/lib/cmake/Qt5
 
 ## 기능
 - 3d 모델링 뷰어

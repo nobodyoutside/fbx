@@ -25,7 +25,7 @@ endif()
 # - FBXVIEWER_QT5_DIR: Qt5 cmake config dir (ends with /lib/cmake/Qt5)
 set(FBXVIEWER_SDK_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/FbxViewer/SDK/fbxsdk"
     CACHE PATH "FBX SDK root for FbxViewer")
-set(FBXVIEWER_QT5_DIR "${CMAKE_CURRENT_SOURCE_DIR}/FbxViewer/SDK/qtsdk/lib/cmake/Qt5"
+set(FBXVIEWER_QT5_DIR "${CMAKE_CURRENT_SOURCE_DIR}/FbxViewer/SDK/Qt5sdk/lib/cmake/Qt5"
     CACHE PATH "Qt5 Dir for FbxViewer")
 
 enable_testing()

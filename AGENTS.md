@@ -6,7 +6,8 @@
 - Windows + Visual Studio + CMake 환경을 기본으로 안내한다.
 
 ## 의존성/환경
-- 공통: Autodesk FBX SDK 필요.
+- 공통: Autodesk FBX SDK 필요. qt5필요
+- 필요한 의존성은 ./SDK 폴더에 구분해서 설치할 것
 - `FbxFileInfo`:
   - FBX SDK 경로: `C:/Program Files/Autodesk/FBX/FBX SDK/2020.3.7`.
   - 배치 스크립트(`build.bat`, `run.bat`) 기준 작업 흐름 유지.

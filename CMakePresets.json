@@ -24,7 +24,7 @@
       "cacheVariables": {
         "FBX_SDK_ROOT": "C:/Program Files/Autodesk/FBX/FBX SDK/2020.3.7",
         "FBXVIEWER_SDK_ROOT": "${sourceDir}/SDK/fbxsdk",
-        "FBXVIEWER_QT5_DIR": "${sourceDir}/FbxViewer/SDK/qtsdk/lib/cmake/Qt5"
+        "FBXVIEWER_QT5_DIR": "${sourceDir}/FbxViewer/SDK/Qt5sdk/lib/cmake/Qt5"
       }
     },
     {
@@ -34,7 +34,7 @@
       "cacheVariables": {
         "FBX_SDK_ROOT": "/Applications/Autodesk/FBX SDK/2020.3.7",
         "FBXVIEWER_SDK_ROOT": "${sourceDir}/SDK/fbxsdk",
-        "FBXVIEWER_QT5_DIR": "${sourceDir}/FbxViewer/SDK/qtsdk/lib/cmake/Qt5"
+        "FBXVIEWER_QT5_DIR": "${sourceDir}/FbxViewer/SDK/Qt5sdk/lib/cmake/Qt5"
       }
     }
   ],

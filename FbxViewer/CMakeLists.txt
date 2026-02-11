@@ -17,7 +17,7 @@ set(FBX_SDK_LIB_DIR "${FBX_SDK_ROOT}/lib/vs2017/x64/debug")
 
 # Qt5 setup (외부에서 -DFBXVIEWER_QT5_DIR=... 로 override 가능)
 if(NOT DEFINED FBXVIEWER_QT5_DIR)
-    set(FBXVIEWER_QT5_DIR "${CMAKE_CURRENT_SOURCE_DIR}/SDK/qtsdk/lib/cmake/Qt5"
+    set(FBXVIEWER_QT5_DIR "${CMAKE_CURRENT_SOURCE_DIR}/SDK/Qt5sdk/lib/cmake/Qt5"
         CACHE PATH "Qt5 Dir for FbxViewer")
 endif()
 set(Qt5_DIR "${FBXVIEWER_QT5_DIR}")
@@ -26,10 +26,10 @@ find_package(Qt5 REQUIRED COMPONENTS Core Gui Widgets)
 
 include_directories(
     ${FBX_SDK_INCLUDE_DIR}
-    ${CMAKE_CURRENT_SOURCE_DIR}/SDK/qtsdk/include
-    ${CMAKE_CURRENT_SOURCE_DIR}/SDK/qtsdk/include/QtCore
-    ${CMAKE_CURRENT_SOURCE_DIR}/SDK/qtsdk/include/QtGui
-    ${CMAKE_CURRENT_SOURCE_DIR}/SDK/qtsdk/include/QtWidgets
+    ${CMAKE_CURRENT_SOURCE_DIR}/SDK/Qt5sdk/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/SDK/Qt5sdk/include/QtCore
+    ${CMAKE_CURRENT_SOURCE_DIR}/SDK/Qt5sdk/include/QtGui
+    ${CMAKE_CURRENT_SOURCE_DIR}/SDK/Qt5sdk/include/QtWidgets
 )
 
 add_executable(FbxViewer 
@@ -44,10 +44,10 @@ add_executable(FbxViewer
 
 target_include_directories(FbxViewer PRIVATE 
     ${FBX_SDK_INCLUDE_DIR}
-    ${CMAKE_CURRENT_SOURCE_DIR}/SDK/qtsdk/include
-    ${CMAKE_CURRENT_SOURCE_DIR}/SDK/qtsdk/include/QtCore
-    ${CMAKE_CURRENT_SOURCE_DIR}/SDK/qtsdk/include/QtGui
-    ${CMAKE_CURRENT_SOURCE_DIR}/SDK/qtsdk/include/QtWidgets
+    ${CMAKE_CURRENT_SOURCE_DIR}/SDK/Qt5sdk/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/SDK/Qt5sdk/include/QtCore
+    ${CMAKE_CURRENT_SOURCE_DIR}/SDK/Qt5sdk/include/QtGui
+    ${CMAKE_CURRENT_SOURCE_DIR}/SDK/Qt5sdk/include/QtWidgets
 )
 
 target_link_directories(FbxViewer PRIVATE ${FBX_SDK_LIB_DIR})

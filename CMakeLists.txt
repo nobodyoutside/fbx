@@ -28,6 +28,8 @@ set(FBXVIEWER_SDK_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/FbxViewer/SDK/fbxsdk"
 set(FBXVIEWER_QT5_DIR "${CMAKE_CURRENT_SOURCE_DIR}/FbxViewer/SDK/qtsdk/lib/cmake/Qt5"
     CACHE PATH "Qt5 Dir for FbxViewer")
 
+enable_testing()
+
 if(BUILD_FBX_FILE_INFO)
   add_subdirectory(FbxFileInfo)
 endif()

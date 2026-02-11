@@ -1,4 +1,4 @@
-﻿cmake_minimum_required(VERSION 4.1)
+cmake_minimum_required(VERSION 3.16)
 project(FbxViewer)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -31,42 +31,36 @@ set(Qt5_DIR "${FBXVIEWER_QT5_DIR}")
 set(CMAKE_PREFIX_PATH "${FBXVIEWER_QT5_DIR}/..")
 find_package(Qt5 REQUIRED COMPONENTS Core Gui Widgets)
 
-include_directories(
-    ${FBX_SDK_INCLUDE_DIR}
-    ${CMAKE_CURRENT_SOURCE_DIR}/SDK/qtsdk/include
-    ${CMAKE_CURRENT_SOURCE_DIR}/SDK/qtsdk/include/QtCore
-    ${CMAKE_CURRENT_SOURCE_DIR}/SDK/qtsdk/include/QtGui
-    ${CMAKE_CURRENT_SOURCE_DIR}/SDK/qtsdk/include/QtWidgets
-)
-
-add_executable(FbxViewer 
-    main.cpp
+# FbxLoader를 정적 라이브러리로 분리 (테스트에서 재사용)
+add_library(FbxLoaderLib STATIC
     FbxLoader.cpp
     FbxLoader.h
-    ViewerWidget.cpp
-    ViewerWidget.h
-    MainWindow.cpp
-    MainWindow.h
 )
-
-target_include_directories(FbxViewer PRIVATE 
+target_include_directories(FbxLoaderLib PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}
     ${FBX_SDK_INCLUDE_DIR}
-    ${CMAKE_CURRENT_SOURCE_DIR}/SDK/qtsdk/include
-    ${CMAKE_CURRENT_SOURCE_DIR}/SDK/qtsdk/include/QtCore
-    ${CMAKE_CURRENT_SOURCE_DIR}/SDK/qtsdk/include/QtGui
-    ${CMAKE_CURRENT_SOURCE_DIR}/SDK/qtsdk/include/QtWidgets
+)
+target_link_directories(FbxLoaderLib PUBLIC
+    "$<IF:$<CONFIG:Debug>,${FBX_SDK_LIB_BASE}/debug,${FBX_SDK_LIB_BASE}/release>")
+target_compile_definitions(FbxLoaderLib PUBLIC FBXSDK_SHARED)
+target_link_libraries(FbxLoaderLib PUBLIC
+    libfbxsdk
+    Qt5::Core
+    Qt5::Gui
 )
 
-target_link_directories(FbxViewer PRIVATE
-    "$<IF:$<CONFIG:Debug>,${FBX_SDK_LIB_BASE}/debug,${FBX_SDK_LIB_BASE}/release>")
+# FbxViewer 실행 파일
+add_executable(FbxViewer
+    main.cpp
+    ViewerWidget.cpp ViewerWidget.h
+    MainWindow.cpp MainWindow.h
+)
 
-# Link against FBX SDK and Qt5
-target_compile_definitions(FbxViewer PRIVATE FBXSDK_SHARED)
-target_link_libraries(FbxViewer PRIVATE 
-    libfbxsdk 
-    Qt5::Core 
-    Qt5::Gui 
-    Qt5::Widgets 
+target_include_directories(FbxViewer PRIVATE ${FBX_SDK_INCLUDE_DIR})
+
+target_link_libraries(FbxViewer PRIVATE
+    FbxLoaderLib
+    Qt5::Core Qt5::Gui Qt5::Widgets
     opengl32
 )
 
@@ -76,5 +70,28 @@ add_custom_command(TARGET FbxViewer POST_BUILD
     "$<IF:$<CONFIG:Debug>,${FBX_SDK_LIB_BASE}/debug,${FBX_SDK_LIB_BASE}/release>/libfbxsdk.dll"
     $<TARGET_FILE_DIR:FbxViewer>)
 
-enable_testing()
-add_test(NAME FBXSDK_Test COMMAND FbxViewer)
+# Qt DLL 배포 (windeployqt로 필요한 DLL + 플러그인 자동 복사)
+find_program(WINDEPLOYQT_EXECUTABLE windeployqt HINTS "${FBXVIEWER_QT5_DIR}/../../../bin")
+if(WINDEPLOYQT_EXECUTABLE)
+    add_custom_command(TARGET FbxViewer POST_BUILD
+        COMMAND "${WINDEPLOYQT_EXECUTABLE}" --no-translations --no-compiler-runtime
+            --no-angle --no-opengl-sw $<TARGET_FILE:FbxViewer>
+    )
+endif()
+
+# GoogleTest 기반 유닛 테스트
+option(BUILD_FBXVIEWER_TESTS "Build FbxViewer tests" ON)
+
+if(BUILD_FBXVIEWER_TESTS)
+    include(FetchContent)
+    FetchContent_Declare(
+        googletest
+        GIT_REPOSITORY https://github.com/google/googletest.git
+        GIT_TAG v1.14.0
+    )
+    set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+    FetchContent_MakeAvailable(googletest)
+
+    enable_testing()
+    add_subdirectory(tests)
+endif()

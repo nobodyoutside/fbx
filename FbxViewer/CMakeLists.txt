@@ -91,7 +91,11 @@ add_custom_command(TARGET FbxViewer POST_BUILD
     $<TARGET_FILE_DIR:FbxViewer>)
 
 # Qt DLL 배포 (windeployqt로 필요한 DLL + 플러그인 자동 복사)
-find_program(WINDEPLOYQT_EXECUTABLE windeployqt HINTS "${FBXVIEWER_QT5_DIR}/../../../bin")
+find_program(WINDEPLOYQT_EXECUTABLE windeployqt HINTS
+    "${Qt5_DIR}/../../../bin"
+    "${FBXVIEWER_QT5_DIR}/../../../bin"
+)
+
 if(WINDEPLOYQT_EXECUTABLE)
     add_custom_command(TARGET FbxViewer POST_BUILD
         COMMAND "${WINDEPLOYQT_EXECUTABLE}" --no-translations --no-compiler-runtime

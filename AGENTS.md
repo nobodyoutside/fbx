@@ -12,7 +12,7 @@
   - FBX SDK 경로: `C:/Program Files/Autodesk/FBX/FBX SDK/2020.3.7`.
   - 배치 스크립트(`build.bat`, `run.bat`) 기준 작업 흐름 유지.
 - `FbxViewer`:
-  - FBX SDK 경로: `FbxViewer/SDK/fbxsdk`.
+  - FBX SDK 경로: 기본적으로 `FbxViewer/SDK/fbxsdk` 탐색. 없으면 `FBX_SDK_ROOT` 환경변수 또는 `C:/Program Files/Autodesk/FBX/FBX SDK/2020.3.7`로 폴백(Fallback).
   - Qt5 경로: `FbxViewer/SDK/qtsdk/lib/cmake/Qt5`.
   - 링크: `libfbxsdk`, `Qt5::Core/Gui/Widgets`, `opengl32`.
   - 빌드 후 `libfbxsdk.dll`을 출력 폴더로 복사.

@@ -43,6 +43,7 @@ TEST_F(FbxLoaderTest, LoadValidFbxFile) {
     if (testFile.empty()) {
         GTEST_SKIP() << "TEST_FBX_FILE not set";
     }
+    std::cout << "TEST_FBX_FILE parsed as: " << testFile << std::endl;
     EXPECT_TRUE(loader.loadFile(testFile));
     EXPECT_FALSE(loader.getMeshes().empty());
 }

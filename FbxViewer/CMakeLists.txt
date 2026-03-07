@@ -8,18 +8,31 @@ set(CMAKE_AUTORCC ON)
 
 # FBX SDK setup (외부에서 -DFBXVIEWER_SDK_ROOT=... 로 override 가능)
 if(NOT DEFINED FBXVIEWER_SDK_ROOT)
-    set(FBXVIEWER_SDK_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/SDK/fbxsdk"
-        CACHE PATH "FBX SDK root for FbxViewer")
+    set(LOCAL_SDK "${CMAKE_CURRENT_SOURCE_DIR}/SDK/fbxsdk")
+    set(SYSTEM_SDK "C:/Program Files/Autodesk/FBX/FBX SDK/2020.3.7")
+    
+    if(EXISTS "${LOCAL_SDK}/include/fbxsdk.h")
+        set(FBXVIEWER_SDK_ROOT "${LOCAL_SDK}" CACHE PATH "FBX SDK root for FbxViewer" FORCE)
+    elseif(DEFINED ENV{FBX_SDK_ROOT} AND EXISTS "$ENV{FBX_SDK_ROOT}/include/fbxsdk.h")
+        set(FBXVIEWER_SDK_ROOT "$ENV{FBX_SDK_ROOT}" CACHE PATH "FBX SDK root for FbxViewer" FORCE)
+    elseif(EXISTS "${SYSTEM_SDK}/include/fbxsdk.h")
+        set(FBXVIEWER_SDK_ROOT "${SYSTEM_SDK}" CACHE PATH "FBX SDK root for FbxViewer" FORCE)
+    else()
+        set(FBXVIEWER_SDK_ROOT "${LOCAL_SDK}" CACHE PATH "FBX SDK root for FbxViewer")
+    endif()
 endif()
 set(FBX_SDK_ROOT "${FBXVIEWER_SDK_ROOT}")
 set(FBX_SDK_INCLUDE_DIR "${FBX_SDK_ROOT}/include")
 # Detect lib directory: system SDK uses lib/x64/<config>, local SDK uses lib/vs2017/x64/<config>
 if(EXISTS "${FBX_SDK_ROOT}/lib/x64")
     set(FBX_SDK_LIB_BASE "${FBX_SDK_ROOT}/lib/x64")
+elseif(EXISTS "${FBX_SDK_ROOT}/lib/vs2019/x64")
+    set(FBX_SDK_LIB_BASE "${FBX_SDK_ROOT}/lib/vs2019/x64")
 elseif(EXISTS "${FBX_SDK_ROOT}/lib/vs2017/x64")
     set(FBX_SDK_LIB_BASE "${FBX_SDK_ROOT}/lib/vs2017/x64")
 else()
-    message(FATAL_ERROR "Cannot find FBX SDK lib directory under ${FBX_SDK_ROOT}/lib")
+    message(WARNING "Cannot find FBX SDK lib directory under ${FBX_SDK_ROOT}/lib")
+    set(FBX_SDK_LIB_BASE "${FBX_SDK_ROOT}/lib/x64")
 endif()
 
 # Qt5 setup (외부에서 -DFBXVIEWER_QT5_DIR=... 로 override 가능)
@@ -39,10 +52,17 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/SDK/Qt5sdk/include/QtWidgets
 )
 
-add_executable(FbxViewer 
-    main.cpp
+add_library(FbxLoaderLib STATIC
     FbxLoader.cpp
     FbxLoader.h
+)
+
+add_executable(FbxViewer 
+    main.cpp
+    MainWindow.cpp
+    MainWindow.h
+    ViewerWidget.cpp
+    ViewerWidget.h
 )
 target_include_directories(FbxLoaderLib PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
@@ -52,12 +72,11 @@ target_include_directories(FbxLoaderLib PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/SDK/Qt5sdk/include/QtGui
     ${CMAKE_CURRENT_SOURCE_DIR}/SDK/Qt5sdk/include/QtWidgets
 )
-
-target_link_directories(FbxViewer PRIVATE ${FBX_SDK_LIB_DIR})
-
-# Link against FBX SDK and Qt5
-target_compile_definitions(FbxViewer PRIVATE FBXSDK_SHARED)
+target_link_libraries(FbxLoaderLib PUBLIC Qt5::Core Qt5::Gui Qt5::Widgets libfbxsdk)
+target_link_directories(FbxLoaderLib PUBLIC $<IF:$<CONFIG:Debug>,${FBX_SDK_LIB_BASE}/debug,${FBX_SDK_LIB_BASE}/release>)
+target_compile_definitions(FbxLoaderLib PUBLIC FBXSDK_SHARED)
 target_link_libraries(FbxViewer PRIVATE 
+    FbxLoaderLib
     libfbxsdk 
     Qt5::Core 
     Qt5::Gui 

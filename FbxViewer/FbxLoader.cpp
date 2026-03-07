@@ -29,6 +29,7 @@ bool FbxLoader::loadFile(const std::string& filename) {
 
     // Importer 초기화 — 파일 열기 시도, 실패하면 false 반환
     if (!importer->Initialize(filename.c_str(), -1, mSdkManager->GetIOSettings())) {
+        std::cerr << "Importer Initialize failed: " << importer->GetStatus().GetErrorString() << std::endl;
         return false;
     }
 

@@ -1,6 +1,7 @@
 #ifndef APP_H
 #define APP_H
 
+#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include "FbxLoader.h"
 #include "Renderer.h"

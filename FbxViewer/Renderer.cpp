@@ -286,17 +286,28 @@ void Renderer::draw(int width, int height) {
     glClearColor(0.15f, 0.15f, 0.18f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    float aspect = (height > 0) ? static_cast<float>(width) / height : 1.0f;
+    glm::mat4 view = camera.viewMatrix();
+    glm::mat4 proj = camera.projMatrix(aspect);
+    glm::mat4 mvp  = proj * view * glm::mat4(1.0f);
+
+    // ── 그리드 / 축 ─────────────────────────────────────────────
+    if (mLineProgram && (showGrid || showOrigin)) {
+        glUseProgram(mLineProgram);
+        if (showGrid)   drawLines(mGridVAO, mGridVertexCount, mvp);
+        if (showOrigin) drawLines(mAxesVAO, 6, mvp);
+        glUseProgram(0);
+    }
+
+    // ── 메시 ────────────────────────────────────────────────────
     if (!mProgram || mMeshGLs.empty()) return;
 
     glUseProgram(mProgram);
 
-    float aspect = (height > 0) ? static_cast<float>(width) / height : 1.0f;
     glm::mat4 model = glm::mat4(1.0f);
-    glm::mat4 view = camera.viewMatrix();
-    glm::mat4 proj = camera.projMatrix(aspect);
-    glm::mat4 mvp = proj * view * model;
+    glm::mat4 meshMvp = proj * view * model;
 
-    glUniformMatrix4fv(glGetUniformLocation(mProgram, "uMVP"), 1, GL_FALSE, glm::value_ptr(mvp));
+    glUniformMatrix4fv(glGetUniformLocation(mProgram, "uMVP"), 1, GL_FALSE, glm::value_ptr(meshMvp));
     glUniformMatrix4fv(glGetUniformLocation(mProgram, "uModel"), 1, GL_FALSE, glm::value_ptr(model));
     glUniform1i(glGetUniformLocation(mProgram, "uViewMode"), static_cast<int>(mViewMode));
     glUniform3f(glGetUniformLocation(mProgram, "uLightDir"), 0.5f, 1.0f, 0.3f);

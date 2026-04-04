@@ -168,26 +168,28 @@ void App::drawImGuiPanel() {
 
 void App::openFileDialog() {
 #ifdef _WIN32
-    OPENFILENAMEA ofn = {};
-    char file[512] = {};
+    OPENFILENAMEW ofn = {};
+    wchar_t wfile[512] = {};
     ofn.lStructSize = sizeof(ofn);
     ofn.hwndOwner = nullptr;
-    ofn.lpstrFilter = "FBX Files\0*.fbx\0All Files\0*.*\0";
-    ofn.lpstrFile = file;
-    ofn.nMaxFile = sizeof(file);
+    ofn.lpstrFilter = L"FBX Files\0*.fbx\0All Files\0*.*\0";
+    ofn.lpstrFile = wfile;
+    ofn.nMaxFile = sizeof(wfile) / sizeof(wchar_t);
     ofn.Flags = OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR;
 
-    if (GetOpenFileNameA(&ofn)) {
-        std::cerr << "[App] File dialog returned: " << file << std::endl;
-        std::cerr << "[App] Path length: " << strlen(file) << std::endl;
-        if (mLoader.loadFile(file)) {
-            std::cerr << "[App] Load success, meshes: " << mLoader.getMeshes().size() << std::endl;
+    if (GetOpenFileNameW(&ofn)) {
+        // UTF-16 → UTF-8 변환 (FBX SDK는 UTF-8 경로를 기대)
+        int utf8Len = WideCharToMultiByte(CP_UTF8, 0, wfile, -1, nullptr, 0, nullptr, nullptr);
+        std::string utf8Path(utf8Len - 1, '\0');
+        WideCharToMultiByte(CP_UTF8, 0, wfile, -1, utf8Path.data(), utf8Len, nullptr, nullptr);
+
+        if (mLoader.loadFile(utf8Path)) {
             mRenderer.setMeshes(mLoader.getMeshes());
             mAnimTime = mLoader.getAnimationStart();
             mFileLoaded = true;
-            std::strncpy(mFilePath, file, sizeof(mFilePath) - 1);
+            std::strncpy(mFilePath, utf8Path.c_str(), sizeof(mFilePath) - 1);
         } else {
-            std::cerr << "[App] Failed to load: " << file << std::endl;
+            std::cerr << "Failed to load: " << utf8Path << std::endl;
         }
     }
 #else

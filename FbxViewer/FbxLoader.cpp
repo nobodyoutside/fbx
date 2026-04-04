@@ -131,7 +131,7 @@ void FbxLoader::processMesh(FbxMesh* mesh) {
                 FbxVector2 uv;
                 bool unmapped;
                 if (mesh->GetPolygonVertexUV(i, j, uvSetName, uv, unmapped)) {
-                    vertex.uv = QVector2D((float)uv[0], (float)uv[1]);
+                    vertex.uv = glm::vec2((float)uv[0], (float)uv[1]);
                 }
             }
 

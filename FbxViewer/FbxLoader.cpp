@@ -50,14 +50,24 @@ bool FbxLoader::loadFile(const std::string& filename) {
 
     // 디버그: 로드된 메시 정보 출력
     std::cerr << "[FbxLoader] Loaded " << mMeshes.size() << " mesh(es) from: " << filename << std::endl;
+    glm::vec3 globalMin(FLT_MAX), globalMax(-FLT_MAX);
     for (size_t i = 0; i < mMeshes.size(); ++i) {
         std::cerr << "  Mesh[" << i << "]: " << mMeshes[i].vertices.size() << " vertices, "
                   << mMeshes[i].indices.size() << " indices" << std::endl;
-        if (!mMeshes[i].vertices.empty()) {
-            auto& v = mMeshes[i].vertices[0];
-            std::cerr << "    First vertex pos: (" << v.position.x << ", " << v.position.y << ", " << v.position.z << ")" << std::endl;
+        for (const auto& v : mMeshes[i].vertices) {
+            globalMin = glm::min(globalMin, v.position);
+            globalMax = glm::max(globalMax, v.position);
         }
+        // 법선 체크
+        int zeroNormals = 0;
+        for (const auto& v : mMeshes[i].vertices) {
+            if (glm::length(v.normal) < 0.001f) zeroNormals++;
+        }
+        std::cerr << "    Zero normals: " << zeroNormals << "/" << mMeshes[i].vertices.size() << std::endl;
     }
+    std::cerr << "  BBox min: (" << globalMin.x << ", " << globalMin.y << ", " << globalMin.z << ")" << std::endl;
+    std::cerr << "  BBox max: (" << globalMax.x << ", " << globalMax.y << ", " << globalMax.z << ")" << std::endl;
+    std::cerr << "  BBox size: (" << (globalMax.x-globalMin.x) << ", " << (globalMax.y-globalMin.y) << ", " << (globalMax.z-globalMin.z) << ")" << std::endl;
 
     // 첫 번째 애니메이션 스택에서 재생 시간 범위를 읽어옴
     if (mScene->GetSrcObjectCount<FbxAnimStack>() > 0) {

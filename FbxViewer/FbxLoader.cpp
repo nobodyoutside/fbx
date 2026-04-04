@@ -119,7 +119,7 @@ void FbxLoader::processMesh(FbxMesh* mesh) {
                     // Direct 모드면 순차 인덱스, IndexToDirect 모드면 인덱스 배열에서 조회
                     int colorIndex = (elementColor->GetReferenceMode() == FbxLayerElement::eDirect) ? i * 3 + j : elementColor->GetIndexArray().GetAt(i * 3 + j);
                     FbxColor color = elementColor->GetDirectArray().GetAt(colorIndex);
-                    vertex.color = QVector4D((float)color.mRed, (float)color.mGreen, (float)color.mBlue, (float)color.mAlpha);
+                    vertex.color = glm::vec4((float)color.mRed, (float)color.mGreen, (float)color.mBlue, (float)color.mAlpha);
                 }
             } else {
                 // 버텍스 컬러가 없으면 흰색(불투명)으로 기본값 설정

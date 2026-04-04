@@ -109,7 +109,7 @@ void FbxLoader::processMesh(FbxMesh* mesh) {
             // 법선 벡터: 폴리곤 버텍스 단위의 법선을 FBX SDK로부터 읽어옴
             FbxVector4 fbxNormal;
             if (mesh->GetPolygonVertexNormal(i, j, fbxNormal)) {
-                vertex.normal = QVector3D((float)fbxNormal[0], (float)fbxNormal[1], (float)fbxNormal[2]);
+                vertex.normal = glm::vec3((float)fbxNormal[0], (float)fbxNormal[1], (float)fbxNormal[2]);
             }
 
             // 버텍스 컬러: 레이어 0의 eByPolygonVertex 매핑 모드인 경우에만 추출

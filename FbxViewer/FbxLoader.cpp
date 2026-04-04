@@ -48,6 +48,17 @@ bool FbxLoader::loadFile(const std::string& filename) {
     // 씬 루트 노드부터 재귀 순회하며 메시 데이터 추출
     processNode(mScene->GetRootNode());
 
+    // 디버그: 로드된 메시 정보 출력
+    std::cerr << "[FbxLoader] Loaded " << mMeshes.size() << " mesh(es) from: " << filename << std::endl;
+    for (size_t i = 0; i < mMeshes.size(); ++i) {
+        std::cerr << "  Mesh[" << i << "]: " << mMeshes[i].vertices.size() << " vertices, "
+                  << mMeshes[i].indices.size() << " indices" << std::endl;
+        if (!mMeshes[i].vertices.empty()) {
+            auto& v = mMeshes[i].vertices[0];
+            std::cerr << "    First vertex pos: (" << v.position.x << ", " << v.position.y << ", " << v.position.z << ")" << std::endl;
+        }
+    }
+
     // 첫 번째 애니메이션 스택에서 재생 시간 범위를 읽어옴
     if (mScene->GetSrcObjectCount<FbxAnimStack>() > 0) {
         FbxAnimStack* animStack = mScene->GetSrcObject<FbxAnimStack>(0);

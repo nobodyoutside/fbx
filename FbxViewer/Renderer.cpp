@@ -1,6 +1,7 @@
 #include "Renderer.h"
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
+#include <vector>
 
 // ─── 내장 셰이더 (OpenGL 3.3 Core) ─────────────────────────────
 

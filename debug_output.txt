@@ -1,0 +1,4 @@
+[App] File dialog returned: D:\iCloudDrive\iCloudDrive\나스백업\home\백업_20250628\10_[[아트공부]]\11_포폴\포폴_2014이전\allo_ipad\ani\09.Pachyrhinosaurus\pachyrhinosaurus.FBX
+[App] Path length: 147
+Importer Initialize failed: None of the registered readers can process the file
+[App] Failed to load: D:\iCloudDrive\iCloudDrive\나스백업\home\백업_20250628\10_[[아트공부]]\11_포폴\포폴_2014이전\allo_ipad\ani\09.Pachyrhinosaurus\pachyrhinosaurus.FBX

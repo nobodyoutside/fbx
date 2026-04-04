@@ -4,16 +4,14 @@
 #include <fbxsdk.h>
 #include <vector>
 #include <string>
-#include <QVector3D>
-#include <QVector2D>
-#include <QVector4D>
+#include <glm/glm.hpp>
 
 /// @brief 하나의 정점이 가지는 속성 데이터 (위치, 법선, 색상, UV 좌표)
 struct Vertex {
-    QVector3D position;  // 정점의 3D 월드 좌표
-    QVector3D normal;    // 정점의 법선 벡터
-    QVector4D color;     // 정점 색상 (RGBA)
-    QVector2D uv;        // 텍스처 UV 좌표
+    glm::vec3 position;  // 정점의 3D 월드 좌표
+    glm::vec3 normal;    // 정점의 법선 벡터
+    glm::vec4 color;     // 정점 색상 (RGBA)
+    glm::vec2 uv;        // 텍스처 UV 좌표
 };
 
 /// @brief 하나의 메시를 구성하는 정점 배열, 인덱스 배열, 텍스처 경로

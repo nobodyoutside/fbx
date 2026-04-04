@@ -112,6 +112,13 @@ void App::drawImGuiPanel() {
 
     ImGui::Separator();
 
+    // 뷰포트 오버레이 토글
+    ImGui::Checkbox("Show Grid",   &mRenderer.showGrid);
+    ImGui::SameLine();
+    ImGui::Checkbox("Show Origin", &mRenderer.showOrigin);
+
+    ImGui::Separator();
+
     // 뷰 모드 선택
     const char* modes[] = {"Normal", "VertexColor", "VertexNormal", "Texture"};
     if (ImGui::Combo("View Mode", &mViewModeIndex, modes, IM_ARRAYSIZE(modes))) {

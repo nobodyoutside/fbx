@@ -112,7 +112,14 @@ void Renderer::init() {
     glDeleteShader(vs);
     glDeleteShader(fs);
 
+    GLuint lvs = compileShader(GL_VERTEX_SHADER, kLineVertexShader);
+    GLuint lfs = compileShader(GL_FRAGMENT_SHADER, kLineFragmentShader);
+    mLineProgram = linkProgram(lvs, lfs);
+    glDeleteShader(lvs);
+    glDeleteShader(lfs);
+
     glEnable(GL_DEPTH_TEST);
+    initGridAndAxes();
 }
 
 GLuint Renderer::compileShader(GLenum type, const char* src) {

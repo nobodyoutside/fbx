@@ -64,6 +64,33 @@ void main() {
 }
 )glsl";
 
+// ─── 라인 셰이더 (그리드 / 축) ──────────────────────────────────
+
+static const char* kLineVertexShader = R"glsl(
+#version 330 core
+layout(location = 0) in vec3 aPos;
+layout(location = 1) in vec3 aColor;
+
+uniform mat4 uMVP;
+
+out vec3 vColor;
+
+void main() {
+    gl_Position = uMVP * vec4(aPos, 1.0);
+    vColor = aColor;
+}
+)glsl";
+
+static const char* kLineFragmentShader = R"glsl(
+#version 330 core
+in vec3 vColor;
+out vec4 FragColor;
+
+void main() {
+    FragColor = vec4(vColor, 1.0);
+}
+)glsl";
+
 // ─── 구현부 ─────────────────────────────────────────────────────
 
 Renderer::Renderer() = default;

@@ -178,13 +178,16 @@ void App::openFileDialog() {
     ofn.Flags = OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR;
 
     if (GetOpenFileNameA(&ofn)) {
+        std::cerr << "[App] File dialog returned: " << file << std::endl;
+        std::cerr << "[App] Path length: " << strlen(file) << std::endl;
         if (mLoader.loadFile(file)) {
+            std::cerr << "[App] Load success, meshes: " << mLoader.getMeshes().size() << std::endl;
             mRenderer.setMeshes(mLoader.getMeshes());
             mAnimTime = mLoader.getAnimationStart();
             mFileLoaded = true;
             std::strncpy(mFilePath, file, sizeof(mFilePath) - 1);
         } else {
-            std::cerr << "Failed to load: " << file << std::endl;
+            std::cerr << "[App] Failed to load: " << file << std::endl;
         }
     }
 #else

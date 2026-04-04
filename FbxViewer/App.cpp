@@ -27,19 +27,24 @@ App::~App() {
 int App::run() {
     if (!initWindow()) return -1;
     mRenderer.init();
+
+    if (!mInitialFile.empty()) {
+        if (mLoader.loadFile(mInitialFile)) {
+            mRenderer.setMeshes(mLoader.getMeshes());
+            mAnimTime = mLoader.getAnimationStart();
+            mFileLoaded = true;
+            std::strncpy(mFilePath, mInitialFile.c_str(), sizeof(mFilePath) - 1);
+        } else {
+            std::cerr << "Failed to load: " << mInitialFile << std::endl;
+        }
+    }
+
     mainLoop();
     return 0;
 }
 
-void App::loadFromPath(const char* path) {
-    if (mLoader.loadFile(path)) {
-        mRenderer.setMeshes(mLoader.getMeshes());
-        mAnimTime = mLoader.getAnimationStart();
-        mFileLoaded = true;
-        std::strncpy(mFilePath, path, sizeof(mFilePath) - 1);
-    } else {
-        std::cerr << "Failed to load: " << path << std::endl;
-    }
+void App::setInitialFile(const char* path) {
+    mInitialFile = path;
 }
 
 bool App::initWindow() {

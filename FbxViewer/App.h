@@ -41,6 +41,8 @@ private:
     bool mDraggingMiddle = false;
     double mLastMouseX = 0.0;
     double mLastMouseY = 0.0;
+
+    std::string mInitialFile;
 };
 
 #endif // APP_H

@@ -100,7 +100,7 @@ void FbxLoader::processMesh(FbxMesh* mesh) {
             Vertex vertex;
 
             // 정점 위치: 컨트롤 포인트 배열에서 XYZ 좌표 추출
-            vertex.position = QVector3D(
+            vertex.position = glm::vec3(
                 (float)controlPoints[ctrlPointIndex][0],
                 (float)controlPoints[ctrlPointIndex][1],
                 (float)controlPoints[ctrlPointIndex][2]

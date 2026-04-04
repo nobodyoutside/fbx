@@ -123,7 +123,7 @@ void FbxLoader::processMesh(FbxMesh* mesh) {
                 }
             } else {
                 // 버텍스 컬러가 없으면 흰색(불투명)으로 기본값 설정
-                vertex.color = QVector4D(1.0f, 1.0f, 1.0f, 1.0f);
+                vertex.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
             }
 
             // UV 좌표: 첫 번째 UV 세트에서 폴리곤 버텍스 단위로 읽어옴

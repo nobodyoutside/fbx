@@ -41,10 +41,21 @@ private:
     GLuint mProgram = 0;
     ViewMode mViewMode = ViewMode::Normal;
 
+    GLuint mLineProgram = 0;
+    GLuint mGridVAO = 0, mGridVBO = 0;
+    GLuint mAxesVAO = 0, mAxesVBO = 0;
+    int    mGridVertexCount = 0;
+
     GLuint compileShader(GLenum type, const char* src);
     GLuint linkProgram(GLuint vert, GLuint frag);
     void uploadMesh(const MeshData& mesh);
     void cleanup();
+    void initGridAndAxes();
+    void drawLines(GLuint vao, int vertexCount, const glm::mat4& mvp);
+
+public:
+    bool showGrid   = true;
+    bool showOrigin = true;
 };
 
 #endif // RENDERER_H

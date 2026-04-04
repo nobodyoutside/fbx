@@ -219,6 +219,68 @@ void Renderer::setViewMode(ViewMode mode) {
     mViewMode = mode;
 }
 
+void Renderer::initGridAndAxes() {
+    struct LineVertex { float x, y, z, r, g, b; };
+
+    // ── 그리드 (XZ 평면, ±10 범위, 1단위 간격) ─────────────────
+    std::vector<LineVertex> gridVerts;
+    const int N = 10;
+    const float dim = static_cast<float>(N);
+    for (int i = -N; i <= N; ++i) {
+        float t = static_cast<float>(i);
+        // Z축 방향 라인 (X 고정)
+        gridVerts.push_back({t, 0.0f, -dim, 0.4f, 0.4f, 0.4f});
+        gridVerts.push_back({t, 0.0f,  dim, 0.4f, 0.4f, 0.4f});
+        // X축 방향 라인 (Z 고정)
+        gridVerts.push_back({-dim, 0.0f, t, 0.4f, 0.4f, 0.4f});
+        gridVerts.push_back({ dim, 0.0f, t, 0.4f, 0.4f, 0.4f});
+    }
+    mGridVertexCount = static_cast<int>(gridVerts.size());
+
+    glGenVertexArrays(1, &mGridVAO);
+    glGenBuffers(1, &mGridVBO);
+    glBindVertexArray(mGridVAO);
+    glBindBuffer(GL_ARRAY_BUFFER, mGridVBO);
+    glBufferData(GL_ARRAY_BUFFER, gridVerts.size() * sizeof(LineVertex),
+                 gridVerts.data(), GL_STATIC_DRAW);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(LineVertex),
+                          reinterpret_cast<void*>(0));
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(LineVertex),
+                          reinterpret_cast<void*>(3 * sizeof(float)));
+    glBindVertexArray(0);
+
+    // ── 원점 축 (X=빨강, Y=초록, Z=파랑, ±5) ───────────────────
+    const float A = 5.0f;
+    const LineVertex axesVerts[] = {
+        {-A, 0, 0,  0.8f, 0.2f, 0.2f}, { A, 0, 0,  0.8f, 0.2f, 0.2f},  // X
+        { 0,-A, 0,  0.2f, 0.8f, 0.2f}, { 0, A, 0,  0.2f, 0.8f, 0.2f},  // Y
+        { 0, 0,-A,  0.2f, 0.4f, 0.9f}, { 0, 0, A,  0.2f, 0.4f, 0.9f},  // Z
+    };
+
+    glGenVertexArrays(1, &mAxesVAO);
+    glGenBuffers(1, &mAxesVBO);
+    glBindVertexArray(mAxesVAO);
+    glBindBuffer(GL_ARRAY_BUFFER, mAxesVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(axesVerts), axesVerts, GL_STATIC_DRAW);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(LineVertex),
+                          reinterpret_cast<void*>(0));
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(LineVertex),
+                          reinterpret_cast<void*>(3 * sizeof(float)));
+    glBindVertexArray(0);
+}
+
+void Renderer::drawLines(GLuint vao, int vertexCount, const glm::mat4& mvp) {
+    glUniformMatrix4fv(glGetUniformLocation(mLineProgram, "uMVP"), 1, GL_FALSE,
+                       glm::value_ptr(mvp));
+    glBindVertexArray(vao);
+    glDrawArrays(GL_LINES, 0, vertexCount);
+    glBindVertexArray(0);
+}
+
 void Renderer::draw(int width, int height) {
     glViewport(0, 0, width, height);
     glClearColor(0.15f, 0.15f, 0.18f, 1.0f);

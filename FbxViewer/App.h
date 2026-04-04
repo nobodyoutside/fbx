@@ -14,6 +14,7 @@ public:
     ~App();
 
     int run();
+    void loadFromPath(const char* path);
 
 private:
     bool initWindow();

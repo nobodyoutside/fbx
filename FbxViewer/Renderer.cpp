@@ -97,7 +97,12 @@ Renderer::Renderer() = default;
 
 Renderer::~Renderer() {
     cleanup();
-    if (mProgram) glDeleteProgram(mProgram);
+    if (mProgram)     glDeleteProgram(mProgram);
+    if (mLineProgram) glDeleteProgram(mLineProgram);
+    if (mGridVAO)     glDeleteVertexArrays(1, &mGridVAO);
+    if (mGridVBO)     glDeleteBuffers(1, &mGridVBO);
+    if (mAxesVAO)     glDeleteVertexArrays(1, &mAxesVAO);
+    if (mAxesVBO)     glDeleteBuffers(1, &mAxesVBO);
 }
 
 void Renderer::init() {

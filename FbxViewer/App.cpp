@@ -31,6 +31,17 @@ int App::run() {
     return 0;
 }
 
+void App::loadFromPath(const char* path) {
+    if (mLoader.loadFile(path)) {
+        mRenderer.setMeshes(mLoader.getMeshes());
+        mAnimTime = mLoader.getAnimationStart();
+        mFileLoaded = true;
+        std::strncpy(mFilePath, path, sizeof(mFilePath) - 1);
+    } else {
+        std::cerr << "Failed to load: " << path << std::endl;
+    }
+}
+
 bool App::initWindow() {
     if (!glfwInit()) {
         std::cerr << "Failed to initialize GLFW" << std::endl;

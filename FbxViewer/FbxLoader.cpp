@@ -29,6 +29,7 @@ bool FbxLoader::loadFile(const std::string& filename) {
 
     // Importer 초기화 — 파일 열기 시도, 실패하면 false 반환
     if (!importer->Initialize(filename.c_str(), -1, mSdkManager->GetIOSettings())) {
+        std::cerr << "Importer Initialize failed: " << importer->GetStatus().GetErrorString() << std::endl;
         return false;
     }
 
@@ -46,6 +47,27 @@ bool FbxLoader::loadFile(const std::string& filename) {
 
     // 씬 루트 노드부터 재귀 순회하며 메시 데이터 추출
     processNode(mScene->GetRootNode());
+
+    // 디버그: 로드된 메시 정보 출력
+    std::cerr << "[FbxLoader] Loaded " << mMeshes.size() << " mesh(es) from: " << filename << std::endl;
+    glm::vec3 globalMin(FLT_MAX), globalMax(-FLT_MAX);
+    for (size_t i = 0; i < mMeshes.size(); ++i) {
+        std::cerr << "  Mesh[" << i << "]: " << mMeshes[i].vertices.size() << " vertices, "
+                  << mMeshes[i].indices.size() << " indices" << std::endl;
+        for (const auto& v : mMeshes[i].vertices) {
+            globalMin = glm::min(globalMin, v.position);
+            globalMax = glm::max(globalMax, v.position);
+        }
+        // 법선 체크
+        int zeroNormals = 0;
+        for (const auto& v : mMeshes[i].vertices) {
+            if (glm::length(v.normal) < 0.001f) zeroNormals++;
+        }
+        std::cerr << "    Zero normals: " << zeroNormals << "/" << mMeshes[i].vertices.size() << std::endl;
+    }
+    std::cerr << "  BBox min: (" << globalMin.x << ", " << globalMin.y << ", " << globalMin.z << ")" << std::endl;
+    std::cerr << "  BBox max: (" << globalMax.x << ", " << globalMax.y << ", " << globalMax.z << ")" << std::endl;
+    std::cerr << "  BBox size: (" << (globalMax.x-globalMin.x) << ", " << (globalMax.y-globalMin.y) << ", " << (globalMax.z-globalMin.z) << ")" << std::endl;
 
     // 첫 번째 애니메이션 스택에서 재생 시간 범위를 읽어옴
     if (mScene->GetSrcObjectCount<FbxAnimStack>() > 0) {
@@ -99,7 +121,7 @@ void FbxLoader::processMesh(FbxMesh* mesh) {
             Vertex vertex;
 
             // 정점 위치: 컨트롤 포인트 배열에서 XYZ 좌표 추출
-            vertex.position = QVector3D(
+            vertex.position = glm::vec3(
                 (float)controlPoints[ctrlPointIndex][0],
                 (float)controlPoints[ctrlPointIndex][1],
                 (float)controlPoints[ctrlPointIndex][2]
@@ -108,7 +130,7 @@ void FbxLoader::processMesh(FbxMesh* mesh) {
             // 법선 벡터: 폴리곤 버텍스 단위의 법선을 FBX SDK로부터 읽어옴
             FbxVector4 fbxNormal;
             if (mesh->GetPolygonVertexNormal(i, j, fbxNormal)) {
-                vertex.normal = QVector3D((float)fbxNormal[0], (float)fbxNormal[1], (float)fbxNormal[2]);
+                vertex.normal = glm::vec3((float)fbxNormal[0], (float)fbxNormal[1], (float)fbxNormal[2]);
             }
 
             // 버텍스 컬러: 레이어 0의 eByPolygonVertex 매핑 모드인 경우에만 추출
@@ -118,11 +140,11 @@ void FbxLoader::processMesh(FbxMesh* mesh) {
                     // Direct 모드면 순차 인덱스, IndexToDirect 모드면 인덱스 배열에서 조회
                     int colorIndex = (elementColor->GetReferenceMode() == FbxLayerElement::eDirect) ? i * 3 + j : elementColor->GetIndexArray().GetAt(i * 3 + j);
                     FbxColor color = elementColor->GetDirectArray().GetAt(colorIndex);
-                    vertex.color = QVector4D((float)color.mRed, (float)color.mGreen, (float)color.mBlue, (float)color.mAlpha);
+                    vertex.color = glm::vec4((float)color.mRed, (float)color.mGreen, (float)color.mBlue, (float)color.mAlpha);
                 }
             } else {
                 // 버텍스 컬러가 없으면 흰색(불투명)으로 기본값 설정
-                vertex.color = QVector4D(1.0f, 1.0f, 1.0f, 1.0f);
+                vertex.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
             }
 
             // UV 좌표: 첫 번째 UV 세트에서 폴리곤 버텍스 단위로 읽어옴
@@ -130,7 +152,7 @@ void FbxLoader::processMesh(FbxMesh* mesh) {
                 FbxVector2 uv;
                 bool unmapped;
                 if (mesh->GetPolygonVertexUV(i, j, uvSetName, uv, unmapped)) {
-                    vertex.uv = QVector2D((float)uv[0], (float)uv[1]);
+                    vertex.uv = glm::vec2((float)uv[0], (float)uv[1]);
                 }
             }
 

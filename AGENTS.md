@@ -1,4 +1,17 @@
 # AGENTS
+이 문서는 저장소 내에서 구동되는 모든 AI 에이전트(기획(PM), 개발, 검토 에이전트 다 포함)가 공통적으로 체화해야 할 핵심 가이드라인입니다.
+
+## 작업의 생명주기 및 AI의 역할 (Workflow Lifecycle)
+본 프로젝트는 안정성 확보를 위해 다음의 워크플로우를 권장합니다:
+1. **기획 (Planning / PM Role)**: (`.agents/workflows/pm_workflow.md` 참조)
+   - 새로운 기능이나 수정 사항 발생 시, 기존 아키텍처와 규칙(AGENTS.md) 기반으로 `task.md` 및 `implementation_plan.md`를 작성하여 코딩 방향성을 확정합니다.
+2. **개발 (Execution / Dev Role)**: (`.agents/workflows/dev_workflow.md` 참조)
+   - 기획된 `task.md`를 기반으로 실제 코드를 작성합니다. `build.bat`을 통해 1차 컴파일을 확인하고, 완료 시 Reviewer에게 코드를 넘깁니다.
+3. **무결성 검토 (Verification / Review Role)**: (`.agents/workflows/review_workflow.md` 참조)
+   - 코드의 메모리 수명 주기(FBX 객체 소멸자) 및 Qt UI 연산 블로킹 부재 여부를 깐깐하게 정적 추적하고, 통과하면 QA로 넘깁니다.
+4. **품질 보증 및 보고 (QA / QA Role)**: (`.agents/workflows/qa_workflow.md` 참조)
+   - 작업 완료 후 뷰어 실행, 캡처를 통한 시각적 검증 및 PM 에이전트/사용자에게 최종 결과(`qa_report.md` 등) 보고를 수행합니다.
+
 
 ## 저장소 개요
 - `FbxFileInfo`와 `FbxViewer`는 독립 서브프로젝트이며 둘 다 FBX SDK 기반 C++ 프로젝트다.
@@ -12,7 +25,7 @@
   - FBX SDK 경로: `C:/Program Files/Autodesk/FBX/FBX SDK/2020.3.7`.
   - 배치 스크립트(`build.bat`, `run.bat`) 기준 작업 흐름 유지.
 - `FbxViewer`:
-  - FBX SDK 경로: `FbxViewer/SDK/fbxsdk`.
+  - FBX SDK 경로: 기본적으로 `FbxViewer/SDK/fbxsdk` 탐색. 없으면 `FBX_SDK_ROOT` 환경변수 또는 `C:/Program Files/Autodesk/FBX/FBX SDK/2020.3.7`로 폴백(Fallback).
   - Qt5 경로: `FbxViewer/SDK/qtsdk/lib/cmake/Qt5`.
   - 링크: `libfbxsdk`, `Qt5::Core/Gui/Widgets`, `opengl32`.
   - 빌드 후 `libfbxsdk.dll`을 출력 폴더로 복사.

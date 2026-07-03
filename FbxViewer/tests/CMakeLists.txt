@@ -1,5 +1,5 @@
 # 테스트 FBX 파일 경로를 컴파일 타임에 전달
-set(TEST_FBX_FILE "${CMAKE_SOURCE_DIR}/FbxFileInfo/fbx_files/test.fbx")
+set(TEST_FBX_FILE "${CMAKE_CURRENT_SOURCE_DIR}/../../FbxFileInfo/fbx_files/test.fbx")
 
 add_executable(fbxviewer_tests
     test_fbxloader.cpp
